@@ -45,7 +45,7 @@ echo "== pack =="
 mkdir -p runs
 echo "== TRAIN (cuda) =="
 # GPU fits a much bigger batch; full run. Adjust --epochs to taste.
-python -u train.py --device cuda --epochs 50 --batch-size 16 --num-workers 8 \
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -u train.py --device cuda --epochs 50 --batch-size 8 --num-workers 8 \
   --data data/packed 2>&1 | tee runs/cloud_train.log
 
 echo "== DONE =="
