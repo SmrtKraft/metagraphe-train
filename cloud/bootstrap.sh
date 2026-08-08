@@ -23,6 +23,7 @@ echo "== vendored arch (Apache-2.0) =="
   https://github.com/bytedance/piano_transcription vendor/piano_transcription
 # 2020-era in-place ReLUs break torch>=2.x autograd (GRU graph version check)
 sed -i 's/F\.relu_(/F.relu(/g' vendor/piano_transcription/pytorch/models.py
+sed -i 's/inplace=True/inplace=False/g' vendor/piano_transcription/pytorch/models.py
 
 mkdir -p data/guitarset checkpoints
 
