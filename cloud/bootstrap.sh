@@ -16,7 +16,7 @@ echo "== GPU =="; nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo "== deps =="
 pip install -q --upgrade pip
 # torch/torchaudio usually preinstalled on the pod's CUDA image; only add ours
-pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile hf_transfer "huggingface_hub==0.34.4"
+pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile matplotlib hf_transfer "huggingface_hub==0.34.4"
 
 echo "== vendored arch (Apache-2.0) =="
 [ -d vendor/piano_transcription ] || git clone -q --depth 1 \
@@ -42,6 +42,7 @@ echo "== pack =="
 [ -f data/packed/guitarset_train.h5 ] || python pack_guitarset.py
 [ -f data/packed/gaps_train.h5 ]      || python pack_gaps.py
 
+mkdir -p runs
 echo "== TRAIN (cuda) =="
 # GPU fits a much bigger batch; full run. Adjust --epochs to taste.
 python -u train.py --device cuda --epochs 50 --batch-size 16 --num-workers 8 \
