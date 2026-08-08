@@ -21,6 +21,8 @@ pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile matplotl
 echo "== vendored arch (Apache-2.0) =="
 [ -d vendor/piano_transcription ] || git clone -q --depth 1 \
   https://github.com/bytedance/piano_transcription vendor/piano_transcription
+# 2020-era in-place ReLUs break torch>=2.x autograd (GRU graph version check)
+sed -i 's/F\.relu_(/F.relu(/g' vendor/piano_transcription/pytorch/models.py
 
 mkdir -p data/guitarset checkpoints
 
