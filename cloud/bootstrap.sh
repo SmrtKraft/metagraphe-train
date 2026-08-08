@@ -16,7 +16,7 @@ echo "== GPU =="; nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo "== deps =="
 pip install -q --upgrade pip
 # torch/torchaudio usually preinstalled on the pod's CUDA image; only add ours
-pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile "huggingface_hub==0.34.4"
+pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile hf_transfer "huggingface_hub==0.34.4"
 
 echo "== vendored arch (Apache-2.0) =="
 [ -d vendor/piano_transcription ] || git clone -q --depth 1 \
