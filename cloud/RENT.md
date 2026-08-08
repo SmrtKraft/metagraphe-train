@@ -28,10 +28,21 @@ plenty for this ~20M-param model. Pick the cheapest available.
   SSH in. ~$0.75–1.10/hr.
 
 ## Then — the one command
-In the pod's terminal, paste:
+The repo is **private**, so pick one:
+
+**A. Make it public for a clean one-liner** (simplest; the training code has no
+secrets — weights/data are never committed). GitHub → the repo → Settings →
+General → *Change visibility → Public*. Then in the pod terminal:
 
 ```bash
 git clone https://github.com/SmrtKraft/metagraphe-train && cd metagraphe-train && bash cloud/bootstrap.sh
+```
+
+**B. Keep it private, clone with a token.** Make a GitHub *fine-grained token*
+(Settings → Developer settings → Tokens) with read access to this repo, then:
+
+```bash
+git clone https://<TOKEN>@github.com/SmrtKraft/metagraphe-train && cd metagraphe-train && bash cloud/bootstrap.sh
 ```
 
 That re-downloads the public datasets on the pod, packs them, and trains on the
