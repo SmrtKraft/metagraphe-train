@@ -46,7 +46,7 @@ echo "== GAPS (HuggingFace, MIT) =="
 # extracted, so needs a roomier disk (~60 GB free). Opt out with MUSICNET=0.
 # We pack straight to 16 kHz h5 then delete the raw 44.1 kHz wavs to reclaim disk.
 echo "== MusicNet (Zenodo, CC-BY-4.0 — commercial-OK) =="
-if [ "${MUSICNET:-1}" = "1" ] && [ ! -f data/packed/musicnet_train.h5 ]; then
+if [ "${MUSICNET:-0}" = "1" ] && [ ! -f data/packed/musicnet_train.h5 ]; then
   mkdir -p data/musicnet
   [ -f data/musicnet/musicnet.tar.gz ] || curl -sL -o data/musicnet/musicnet.tar.gz \
     "https://zenodo.org/records/5120004/files/musicnet.tar.gz"
