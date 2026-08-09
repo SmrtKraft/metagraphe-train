@@ -41,6 +41,22 @@ fi
 echo "== GAPS (HuggingFace, MIT) =="
 [ -d data/gaps/audio ] || python -c "from huggingface_hub import snapshot_download; snapshot_download('xavriley/GAPS', repo_type='dataset', local_dir='data/gaps')"
 
+# MusicNet — real chamber recordings (piano/strings/winds), CC-BY-4.0 (commercial
+# OK w/ attribution; verified 2026-08-09 on Zenodo 5120004). ~11 GB tar → ~50 GB
+# extracted, so needs a roomier disk (~60 GB free). Opt out with MUSICNET=0.
+# We pack straight to 16 kHz h5 then delete the raw 44.1 kHz wavs to reclaim disk.
+echo "== MusicNet (Zenodo, CC-BY-4.0 — commercial-OK) =="
+if [ "${MUSICNET:-1}" = "1" ] && [ ! -f data/packed/musicnet_train.h5 ]; then
+  mkdir -p data/musicnet
+  [ -f data/musicnet/musicnet.tar.gz ] || curl -sL -o data/musicnet/musicnet.tar.gz \
+    "https://zenodo.org/records/5120004/files/musicnet.tar.gz"
+  [ -f data/musicnet/musicnet_metadata.csv ] || curl -sL -o data/musicnet/musicnet_metadata.csv \
+    "https://zenodo.org/records/5120004/files/musicnet_metadata.csv"
+  tar xzf data/musicnet/musicnet.tar.gz -C data/musicnet
+  python pack_musicnet.py --root data/musicnet   # add --limit N if disk is tight
+  rm -rf data/musicnet/musicnet/*_data data/musicnet/musicnet.tar.gz
+fi
+
 echo "== pack =="
 [ -f data/packed/guitarset_train.h5 ] || python pack_guitarset.py
 [ -f data/packed/gaps_train.h5 ]      || python pack_gaps.py
