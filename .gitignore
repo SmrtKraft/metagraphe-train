@@ -6,3 +6,4 @@ __pycache__/
 *.h5
 runs/
 vendor/
+symphonia-banks.tgz

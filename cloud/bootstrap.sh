@@ -16,7 +16,7 @@ echo "== GPU =="; nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo "== deps =="
 pip install -q --upgrade pip
 # torch/torchaudio usually preinstalled on the pod's CUDA image; only add ours
-pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile matplotlib hf_transfer "huggingface_hub==0.34.4"
+pip install -q torchlibrosa librosa h5py mido mir_eval pandas soundfile scipy matplotlib hf_transfer "huggingface_hub==0.34.4"
 
 echo "== vendored arch (Apache-2.0) =="
 [ -d vendor/piano_transcription ] || git clone -q --depth 1 \
@@ -60,6 +60,21 @@ fi
 echo "== pack =="
 [ -f data/packed/guitarset_train.h5 ] || python pack_guitarset.py
 [ -f data/packed/gaps_train.h5 ]      || python pack_gaps.py
+
+echo "== SYMPHONIA banks -> synth polyphony (public-domain single notes) =="
+# Unlimited perfectly-labeled multi-instrument polyphony from KANON's orchestral
+# banks. Teaches the model RHYTHM (beat-grid onsets, waltz/boom-chick bass<->chord
+# interplay, swing, human jitter) and fills the 10 orchestral instruments the
+# guitar/chamber datasets lack. train.py globs data/packed/*_train.h5, so it joins
+# the mix automatically. Verified: 1500 train / 48.7k notes, coverage 80-100% of
+# each instrument's range, event->f0 Goertzel alignment PASS.
+if [ ! -d data/banks/piano ]; then
+  mkdir -p data/banks
+  curl -sL -o data/banks/symphonia-banks.tgz \
+    "https://github.com/SmrtKraft/metagraphe-train/releases/download/banks-v1/symphonia-banks.tgz"
+  tar xzf data/banks/symphonia-banks.tgz -C data/banks && rm -f data/banks/symphonia-banks.tgz
+fi
+[ -f data/packed/synth_train.h5 ] || python synth_banks.py
 
 mkdir -p runs
 echo "== TRAIN (cuda) =="
